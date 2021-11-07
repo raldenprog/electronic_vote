@@ -1,11 +1,18 @@
 from main import app
-from flask import render_template, flash, redirect, url_for, request
+from flask import render_template, flash, redirect, url_for, request, jsonify
 from flask_login import current_user, login_user, logout_user, login_required
 from werkzeug.urls import url_parse
 from forms.login import LoginForm
 from forms.register import RegisterForm
 from app.models.user import User
 from app import db
+
+
+@app.route('/ ', methods=['POST'])
+@login_required
+def open_key():
+    flash('Get open_key')
+    return jsonify({'text': 'Get open_key'})
 
 
 @app.route('/')

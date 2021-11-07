@@ -18,3 +18,4 @@ bootstrap = Bootstrap(app)
 
 import routes
 from models import user
+import errors
