@@ -1,5 +1,5 @@
 from flask import Flask
-from config import Config
+from app.config import Config
 from flask_login import LoginManager
 from flask_sqlalchemy import SQLAlchemy
 from flask_migrate import Migrate
@@ -16,6 +16,6 @@ login = LoginManager(app)
 login.login_view = 'login'
 bootstrap = Bootstrap(app)
 
-import routes
-from models import user
-import errors
+from app import routes
+from app.models import user
+from app import errors

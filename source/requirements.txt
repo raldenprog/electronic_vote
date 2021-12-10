@@ -1,0 +1,7 @@
+PyCryptodome
+Flask
+flask-wtf
+flask-bootstrap
+flask-migrate
+flask-sqlalchemy
+Flask-Login
