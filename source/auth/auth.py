@@ -1,11 +1,11 @@
 import uuid
 import hashlib
-from db import select_one, insert
+from auth.db import select_one, insert
 
 DEFAULT_SALT = 'b6c7130abc3e431b9d0df698d1eea4d5'  # Вторая соль, не хранящаяся в бд одинаковая для всех паролей
 
 
-def auth(login: str, password: str) -> int:
+def auth(login: str, password: str):
     """
     Функция авторизации пользователя
     Args:
@@ -16,7 +16,7 @@ def auth(login: str, password: str) -> int:
         идентификатор пользователя
     """
     user = get_user_by_login(login)
-    if check_password(user['hash_pass'], password):
+    if user and check_password(user['hash_pass'], password):
         return user
     else:
         raise Exception('Неверный логин или пароль')

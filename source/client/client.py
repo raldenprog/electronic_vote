@@ -1,62 +1,82 @@
-
-# импортируем библиотеку tkinter всю сразу
 from tkinter import *
-from tkinter import messagebox
+import tkinter.messagebox as tm
+from source.auth.auth import auth
 
-# главное окно приложения
-window = Tk()
-# заголовок окна
-window.title('Авторизация')
-# размер окна
-window.geometry('300x230')
-# можно ли изменять размер окна - нет
-window.resizable(False, False)
-
-# кортежи и словари, содержащие настройки шрифтов и отступов
-font_header = ('Arial', 15)
-font_entry = ('Arial', 12)
-label_font = ('Arial', 11)
-base_padding = {'padx': 10, 'pady': 8}
-header_padding = {'padx': 10, 'pady': 12}
+CANDIDATES = {
+    1: 'Вариант 1',
+    2: 'Вариант 2',
+    3: 'Вариант 3',
+    4: 'Вариант 4',
+}
 
 
-# обработчик нажатия на клавишу 'Войти'
-def clicked():
-    print(t)
-    # получаем имя пользователя и пароль
-    username = username_entry.get()
-    password = password_entry.get()
+class LoginFrame(Frame):
+    def __init__(self, master):
+        super().__init__(master)
 
-    # выводим в диалоговое окно введенные пользователем данные
-    messagebox.showinfo('Заголовок', '{username}, {password}'.format(username=username, password=password))
-t = 1
+        self.label_username = Label(self, text="Логин")
+        self.label_password = Label(self, text="Пароль")
 
-# заголовок формы: настроены шрифт (font), отцентрирован (justify), добавлены отступы для заголовка
-# для всех остальных виджетов настройки делаются также
-main_label = Label(window, text='Авторизация', font=font_header, justify=CENTER, **header_padding)
-# помещаем виджет в окно по принципу один виджет под другим
-main_label.pack()
+        self.entry_username = Entry(self)
+        self.entry_password = Entry(self, show="*")
 
-# метка для поля ввода имени
-username_label = Label(window, text='Имя пользователя', font=label_font , **base_padding)
-username_label.pack()
+        self.label_username.grid(row=0, sticky=E)
+        self.label_password.grid(row=1, sticky=E)
+        self.entry_username.grid(row=0, column=1)
+        self.entry_password.grid(row=1, column=1)
 
-# поле ввода имени
-username_entry = Entry(window, bg='#fff', fg='#444', font=font_entry)
-username_entry.pack()
+        self.login_btn = Button(self, text="Войти", command=self.btn_clicked)
+        self.login_btn.grid(columnspan=2)
 
-# метка для поля ввода пароля
-password_label = Label(window, text='Пароль', font=label_font , **base_padding)
-password_label.pack()
+        self.pack()
 
-# поле ввода пароля
-password_entry = Entry(window, bg='#fff', fg='#444', font=font_entry)
-password_entry.pack()
+    def btn_clicked(self):
+        username = self.entry_username.get()
+        password = self.entry_password.get()
+        if not username or not password:
+            tm.showerror('Ошибка', 'Неверный логин или пароль!')
 
-# кнопка отправки формы
-send_btn = Button(window, text='Войти', command=clicked)
-send_btn.pack(**base_padding)
+        user = auth(username, password)
+        if not user:
+            tm.showerror('Ошибка', 'Неверный логин или пароль!')
+
+        self.destroy()
+        ChoiceCandidate(self.master, user)
 
 
-# запускаем главный цикл окна
-window.mainloop()
+class ChoiceCandidate:
+    def __init__(self, master, user=None):
+        self.master = master
+        self.var = IntVar()
+        self.frame = LabelFrame(master, text=f'Привет {user["login"]}, сделай свой выбор!', padx=50)
+        self.frame.pack()
+        for id_candidate, candidate in CANDIDATES.items():
+            Radiobutton(self.frame, text=candidate, variable=self.var, value=id_candidate).pack(anchor=W)
+
+        self.btn = Button(master, text='Голосовать', padx=20, pady=5, command=self.btn_clicked)
+        self.btn.pack(pady=10)
+
+    def btn_clicked(self):
+        value = self.var.get()
+        print(value)
+        if value:
+            self.frame.destroy()
+            self.btn.destroy()
+            ResultVote(self.master, value)
+        else:
+            tm.showerror('Ошибка', 'Пожалуйста, выберите один из предложенных вариантов')
+
+
+class ResultVote:
+    def __init__(self, master, id_candidate=None):
+        self.var = IntVar()
+        self.label = Label(master, text=f'Голос за кандидата "{CANDIDATES[id_candidate]}" учтен!')
+        self.label.grid(row=0, sticky=E)
+        self.label.pack()
+
+
+root = Tk()
+root.title('Дистанционное электронное голосование')
+root.geometry('400x230')
+lf = LoginFrame(root)
+root.mainloop()
