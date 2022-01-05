@@ -1,8 +1,45 @@
 import uuid
 import hashlib
-from auth.db import select_one, insert
+from db import select_one, insert, select
 
 DEFAULT_SALT = 'b6c7130abc3e431b9d0df698d1eea4d5'  # Вторая соль, не хранящаяся в бд одинаковая для всех паролей
+
+
+def make_session(id_user: int) -> str:
+    sql = f"""
+      insert into "sessions_users"
+  (id_user, id)
+  values( 
+    {id_user}
+    , uuid_in(md5(random()::text || now()::text)::cstring)::text
+  )
+  returning id as "session"
+    """
+    return insert(sql)
+
+
+def save_public_key_user(id_user: int, public_key: str) -> bool:
+    exist_key = public_key_by_id(id_user)
+    if not exist_key:
+        sql = f"""
+          insert into "public_keys"
+      (id_user, key)
+      values( 
+        {id_user}
+        , '{public_key}'
+      )
+        """
+        insert(sql)
+        return True
+    else:
+        return False
+
+
+def public_key_by_id(id_user: int):
+    sql = f"""
+      select key from "public_keys" where id_user = {id_user}::int
+    """
+    return select_one(sql)
 
 
 def auth(login: str, password: str):
@@ -18,8 +55,6 @@ def auth(login: str, password: str):
     user = get_user_by_login(login)
     if user and check_password(user['hash_pass'], password):
         return user
-    else:
-        raise Exception('Неверный логин или пароль')
 
 
 def registration(login: str, password: str) -> int:

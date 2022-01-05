@@ -4,7 +4,7 @@ from pprint import pprint
 
 
 def connect():
-    conn = psycopg2.connect(dbname='registrator', user='raldenprog',
+    conn = psycopg2.connect(dbname='validator', user='raldenprog',
                             password='Nedlar_proG', host='localhost')
     return conn, conn.cursor(cursor_factory=psycopg2.extras.DictCursor)
 

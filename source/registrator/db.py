@@ -1,5 +1,6 @@
 import psycopg2
 import psycopg2.extras
+from pprint import pprint
 
 
 def connect():
@@ -9,19 +10,25 @@ def connect():
 
 
 def select(sql: str):
+    pprint(sql)
     conn, cursor = connect()
     cursor.execute(sql)
     return cursor.fetchall()
 
 
 def select_one(sql: str):
+    pprint(sql)
     conn, cursor = connect()
     cursor.execute(sql)
     return cursor.fetchone()
 
 
 def insert(sql: str):
+    pprint(sql)
     conn, cursor = connect()
     cursor.execute(sql)
     conn.commit()
-    return cursor.fetchone()
+    try:
+        return cursor.fetchone()
+    except:
+        pass
