@@ -1,7 +1,5 @@
-import os
-import uuid
-import hashlib
 from validator.db import insert, select
+from Crypto.Cipher import PKCS1_OAEP
 
 
 from Crypto.Signature import pkcs1_15
@@ -41,3 +39,25 @@ def update_private(id_user: int, private) -> None:
       update "bulletins" set private_key = '{private}' where id_user = {id_user}
     """
     return insert(sql)
+
+
+def decrypt(encrypt_key, message):
+    return PKCS1_OAEP.new(encrypt_key).decrypt(message)
+
+
+def decrypt_messages():
+    sql = f"""
+      select * from "bulletins" where private_key is not null
+    """
+    result_sql = select(sql)
+    results = {}
+    for row in result_sql:
+        decrypted = decrypt(row['messsage'], row['private_key'])
+        count = results.get(decrypted)
+        results[decrypted] = count
+    return results
+
+def get_keys():
+    sql = """
+    select id, private_key from "bulletins" where private_key is not null
+    """

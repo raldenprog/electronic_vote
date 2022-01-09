@@ -4,7 +4,9 @@ import requests
 from tkinter import *
 import tkinter.messagebox as tm
 from Crypto.PublicKey import RSA
-from auth.client_protocol import encrypt, sign
+from Crypto.Signature import pkcs1_15
+from Crypto.Cipher import PKCS1_OAEP
+from Crypto.Hash import SHA256
 
 
 CANDIDATES = {
@@ -14,6 +16,22 @@ CANDIDATES = {
     'Вариант 4',
 }
 
+
+def encrypt(message):
+    encrypt_key = RSA.generate(2048)
+    encrypted_message = PKCS1_OAEP.new(encrypt_key).encrypt(message)
+    return encrypt_key, encrypted_message
+
+
+def decrypt(encrypt_key, message):
+    return PKCS1_OAEP.new(encrypt_key).decrypt(message)
+
+
+def sign(encrypted_2_message, private):
+    hash_encrypted_2_message = SHA256.new(encrypted_2_message)
+
+    signature = pkcs1_15.new(private).sign(hash_encrypted_2_message)
+    return signature
 
 try:
     with open('private.txt', 'r') as f:

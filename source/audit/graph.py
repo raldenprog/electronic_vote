@@ -13,10 +13,6 @@ for i in range(25):
 
 fig, ax = plt.subplots()
 
-# plt.figure(figsize=(12, 7))
-
-# plt.plot(graph.keys(), graph.values(), 'o-b')
-# plt.legend()
 
 ax.plot(graph.keys(), graph.values(), 'o-b')
 ax.set_xlabel('Время',

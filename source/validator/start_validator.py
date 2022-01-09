@@ -3,7 +3,7 @@ from flask import Flask
 from flask import request, jsonify
 from validator.config_validator import Config
 from Crypto.PublicKey import RSA
-from validator.helper import insert_message, update_private, check_sign, sign
+from validator.helper import insert_message, update_private, check_sign, sign, decrypt_messages, get_keys
 import requests
 
 app = Flask(__name__)
@@ -47,6 +47,18 @@ def accept():
     private = data.get('private')
     update_private(id_user, private)
     return {}, 200
+
+
+@app.route('/get_results', methods=['POST'])
+def get_results():
+    results = decrypt_messages()
+    return jsonify(results), 200
+
+
+@app.route('/get_keys_for_replicas', methods=['POST'])
+def get_keys_for_replicas():
+    results = get_keys()
+    return jsonify(results), 200
 
 
 if __name__ == "__main__":
