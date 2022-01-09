@@ -3,8 +3,7 @@ from flask import Flask
 from flask import request, jsonify
 from validator.config_validator import Config
 from Crypto.PublicKey import RSA
-from auth.client_protocol import check_sign, sign
-from validator.helper import insert_message, update_private
+from validator.helper import insert_message, update_private, check_sign, sign
 import requests
 
 app = Flask(__name__)

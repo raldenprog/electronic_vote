@@ -5,19 +5,6 @@ from db import select_one, insert, select
 DEFAULT_SALT = 'b6c7130abc3e431b9d0df698d1eea4d5'  # Вторая соль, не хранящаяся в бд одинаковая для всех паролей
 
 
-def make_session(id_user: int) -> str:
-    sql = f"""
-      insert into "sessions_users"
-  (id_user, id)
-  values( 
-    {id_user}
-    , uuid_in(md5(random()::text || now()::text)::cstring)::text
-  )
-  returning id as "session"
-    """
-    return insert(sql)
-
-
 def save_public_key_user(id_user: int, public_key: str) -> bool:
     exist_key = public_key_by_id(id_user)
     if not exist_key:
