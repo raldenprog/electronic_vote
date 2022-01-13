@@ -7,7 +7,7 @@ graph = {
 }
 
 delta = 0
-for i in range(25):
+for i in range(17):
     delta += 10
     graph[(datetime.now() + timedelta(minutes=delta)).strftime('%H:%M')] = randint(10, 40)
 

@@ -9,6 +9,6 @@ class Config(object):
     DEBUG = False
     HOST = '0.0.0.0'
     PORT = 13451
-    START_VOTING = datetime.now() + timedelta(seconds=10)
-    START_ACCEPTING_VOTE = datetime.now() + timedelta(seconds=60)
-    STOP_VOTING = datetime.now() + timedelta(seconds=60)
+    START_VOTING = datetime.now() + timedelta(hours=1)
+    START_ACCEPTING_VOTE = datetime.now() + timedelta(hours=2)
+    STOP_VOTING = datetime.now() + timedelta(hours=3)
